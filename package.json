@@ -12,7 +12,7 @@
   "scripts": {
     "build": "esbuild myalarmviewer.js --bundle --format=esm --outfile=dist/myalarmviewer.js --minify --external:tslib --external:@node-projects/base-custom-webcomponent",
     "build:dev": "esbuild myalarmviewer.js --bundle --format=esm --outfile=dist/myalarmviewer.js --external:tslib --external:@node-projects/base-custom-webcomponent",
-    "build:css": "powershell -Command \"Copy-Item 'node_modules/flatpickr/dist/flatpickr.min.css' 'dist/css/flatpickr.min.css' -Force\"",
+    "build:css": "cp node_modules/flatpickr/dist/flatpickr.min.css dist/css/flatpickr.min.css",
     "build:all": "npm run build && npm run build:css",
     "build:all:dev": "npm run build:dev && npm run build:css",
     "pack": "npm run build:all && npm pack",
