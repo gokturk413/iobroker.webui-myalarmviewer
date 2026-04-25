@@ -1,6 +1,6 @@
 {
   "name": "@gokturk413/myalarmviewer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Alarm viewer web components for ioBroker WebUI",
   "main": "dist/myalarmviewer.js",
   "module": "dist/myalarmviewer.js",
