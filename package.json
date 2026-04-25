@@ -1,0 +1,47 @@
+{
+  "name": "@gokturk413/myalarmviewer",
+  "version": "1.0.0",
+  "description": "Alarm viewer web components for ioBroker WebUI",
+  "main": "dist/myalarmviewer.js",
+  "module": "dist/myalarmviewer.js",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "esbuild myalarmviewer.js --bundle --format=esm --outfile=dist/myalarmviewer.js --minify --external:tslib --external:@node-projects/base-custom-webcomponent",
+    "build:dev": "esbuild myalarmviewer.js --bundle --format=esm --outfile=dist/myalarmviewer.js --external:tslib --external:@node-projects/base-custom-webcomponent",
+    "build:css": "powershell -Command \"Copy-Item 'node_modules/flatpickr/dist/flatpickr.min.css' 'dist/css/flatpickr.min.css' -Force\"",
+    "build:all": "npm run build && npm run build:css",
+    "build:all:dev": "npm run build:dev && npm run build:css",
+    "pack": "npm run build:all && npm pack",
+    "pack:dev": "npm run build:all:dev && npm pack"
+  },
+  "keywords": [
+    "iobroker",
+    "webui",
+    "alarm",
+    "viewer",
+    "web-components",
+    "custom-elements"
+  ],
+  "author": "gokturk413 <gokturk413@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "flatpickr": "^4.6.13",
+    "jspdf": "^2.5.2",
+    "jspdf-autotable": "^3.8.3",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gokturk413/iobroker.webui-myalarmviewer.git"
+  }
+}

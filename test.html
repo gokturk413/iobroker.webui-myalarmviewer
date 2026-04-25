@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Viewer Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .test-controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+        .test-controls h3 {
+            margin-top: 0;
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background: #4682b4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #3a6d99;
+        }
+        .alarm-viewer-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 500px;
+        }
+        .info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .sample-data {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚨 Alarm Viewer Test Page</h1>
+        
+        <div class="info">
+            <strong>ℹ️ Info:</strong> Bu səhifə alarm viewer component-ini test etmək üçündür. 
+            JSON data daxil edib "Load Data" düyməsinə basın.
+        </div>
+
+        <div class="test-controls">
+            <h3>📊 Test Controls</h3>
+            
+            <label for="jsonData"><strong>JSON Alarm Data:</strong></label>
+            <textarea id="jsonData" placeholder='Paste JSON alarm data here...'>
+[
+  {
+    "id": 1,
+    "Tagname": "opcua.0.vars.Objects.OpenIndustry.Stansiya486Yeni.7102_Meter1_Flow_Rate_Gross_float",
+    "Alarmtype": "alarm",
+    "alarmtime": "58165-08-16 20:51:58",
+    "Description": "alarm test",
+    "LimitValue": "2",
+    "Limitmessage": "Alarm Low",
+    "HIGH_LOW": "low",
+    "AlarmValue": "1",
+    "Acknowledge": "unack",
+    "acknowledgetime": ""
+  },
+  {
+    "id": 2,
+    "Tagname": "opcua.0.vars.Objects.OpenIndustry.Stansiya486Yeni.7102_Meter1_Flow_Rate_Gross_float",
+    "Alarmtype": "alarm",
+    "alarmtime": "58154-03-05 17:30:48",
+    "Description": "alarm test",
+    "LimitValue": "15",
+    "Limitmessage": "Alarm high",
+    "HIGH_LOW": "high",
+    "AlarmValue": "16",
+    "Acknowledge": "unack",
+    "acknowledgetime": ""
+  }
+]
+</textarea>
+            
+            <button onclick="loadData()">📥 Load Data</button>
+            <button onclick="clearData()">🗑️ Clear Data</button>
+            <button onclick="loadSampleWarning()">⚠️ Load Warning Sample</button>
+            
+            <div class="sample-data">
+                <strong>💡 Tip:</strong> Alarmtype: "alarm" = qırmızı, "warning" = mavi
+            </div>
+        </div>
+
+        <div class="alarm-viewer-container">
+            <alarm-viewer 
+                id="alarmViewer"
+                oid-json="[]"
+                oid-is-alarm="test.isAlarm"
+                oid-ack="test.ack"
+                soundfile="alarm.mp3"
+                alarmtype=""
+                theme="light">
+            </alarm-viewer>
+        </div>
+
+        <h2 style="margin-top: 40px;">📊 Historical Alarm Viewer Test</h2>
+        
+        <div class="info">
+            <strong>ℹ️ Info:</strong> HistoricalAlarmViewer adapter-dən data yükləyir. 
+            Date range seçib "Get Alarms" düyməsinə basın və ya test data yükləyin.
+        </div>
+
+        <div class="test-controls">
+            <h3>📅 Historical Test Controls</h3>
+            
+            <label><strong>Adapter Instance:</strong></label>
+            <input type="text" id="adapterInstance" value="myalarm.0" style="width: 200px; padding: 8px; margin-bottom: 10px;" />
+            
+            <label><strong>Default Days:</strong></label>
+            <input type="number" id="defaultDays" value="7" style="width: 100px; padding: 8px; margin-bottom: 10px;" />
+            
+            <br>
+            <button onclick="updateHistoricalProps()">🔄 Update Properties</button>
+            <button onclick="loadMockHistoricalData()">📥 Load Mock Historical Data</button>
+            
+            <div class="sample-data">
+                <strong>💡 Tip:</strong> Mock data otomatik table-ə yüklənəcək. Real adapter üçün WebUI-də test edin.
+            </div>
+        </div>
+
+        <div class="alarm-viewer-container">
+            <historical-alarm-viewer 
+                id="historicalViewer"
+                adapter-instance="myalarm.0"
+                default-days="7"
+                theme="light">
+            </historical-alarm-viewer>
+        </div>
+    </div>
+
+    <!-- Load CSS for testing -->
+    <link rel="stylesheet" href="./dist/css/tabulator_midnight.css">
+    <link rel="stylesheet" href="./dist/css/flatpickr.min.css">
+
+    <!-- Global functions (must be defined before onclick handlers are used) -->
+    <script>
+        // These functions need to be in global scope for onclick handlers
+        window.loadData = function() {
+            const jsonData = document.getElementById('jsonData').value;
+            const viewer = document.getElementById('alarmViewer');
+            
+            try {
+                JSON.parse(jsonData); // Validate JSON
+                viewer.setAttribute('oid-json', jsonData);
+                console.log('✅ Data loaded successfully');
+                alert('✅ Data loaded! Check the table.');
+            } catch (e) {
+                alert('❌ Invalid JSON: ' + e.message);
+            }
+        };
+
+        window.clearData = function() {
+            const viewer = document.getElementById('alarmViewer');
+            viewer.setAttribute('oid-json', '[]');
+            console.log('🗑️ Data cleared');
+        };
+
+        window.loadSampleWarning = function() {
+            const sampleData = [
+                {
+                    "id": 1,
+                    "Tagname": "test.warning1",
+                    "Alarmtype": "warning",
+                    "alarmtime": "2024-03-09 17:30:00",
+                    "Description": "Test Warning",
+                    "LimitValue": "100",
+                    "Limitmessage": "High Warning",
+                    "HIGH_LOW": "high",
+                    "AlarmValue": "105",
+                    "Acknowledge": "unack",
+                    "acknowledgetime": ""
+                },
+                {
+                    "id": 2,
+                    "Tagname": "test.alarm1",
+                    "Alarmtype": "alarm",
+                    "alarmtime": "2024-03-09 17:31:00",
+                    "Description": "Test Alarm",
+                    "LimitValue": "50",
+                    "Limitmessage": "Critical High",
+                    "HIGH_LOW": "high",
+                    "AlarmValue": "75",
+                    "Acknowledge": "unack",
+                    "acknowledgetime": ""
+                }
+            ];
+            document.getElementById('jsonData').value = JSON.stringify(sampleData, null, 2);
+            window.loadData();
+        };
+
+        // Historical viewer functions
+        window.updateHistoricalProps = function() {
+            const viewer = document.getElementById('historicalViewer');
+            const adapterInstance = document.getElementById('adapterInstance').value;
+            const defaultDays = document.getElementById('defaultDays').value;
+            
+            viewer.setAttribute('adapter-instance', adapterInstance);
+            viewer.setAttribute('default-days', defaultDays);
+            
+            console.log('✅ Historical viewer properties updated');
+            alert('✅ Properties updated!');
+        };
+
+        window.loadMockHistoricalData = function() {
+            console.log('📥 Triggering historical data load...');
+            alert('📊 Click "Get Alarms" button in the Historical Viewer or select a date range. Mock data will be loaded automatically.');
+        };
+    </script>
+
+    <!-- Import bundled component (includes flatpickr, jsPDF, XLSX) -->
+    <!-- VIS Tabulator v4.x will be loaded dynamically from dist/js/ -->
+    <script type="module">
+        import './dist/myalarmviewer.js';
+        
+        // Mock window.IOB for testing
+        window.IOB = {
+            setState: function(oid, value) {
+                console.log('✅ IOB.setState called:', oid, '=', value);
+                alert(`Acknowledged alarm ID: ${value}`);
+            },
+            getState: function(oid) {
+                return null;
+            },
+            connection: {
+                _socket: {
+                    emit: function(event, adapter, command, params, callback) {
+                        console.log('📡 Socket emit:', event, adapter, command, params);
+                        
+                        // Mock historical data response
+                        if (command === 'getlog') {
+                            const mockHistoricalData = [
+                                {
+                                    "id": 3,
+                                    "Tagname": "opcua.0.vars.Objects.OpenIndustry.Stansiya486Yeni.7103_Meter1_Flow_Rate_Gross_float",
+                                    "Alarmtype": "alarm",
+                                    "alarmtimeconverted": "2026-03-11 13:36:01",
+                                    "alarmdateconverted": "2026-03-11",
+                                    "Description": "alarm test",
+                                    "LimitValue": 15,
+                                    "Limitmessage": "Alarm high",
+                                    "HIGH_LOW": "highHigh",
+                                    "AlarmTime": 1773221761192,
+                                    "AlarmValue": "20",
+                                    "Acknowledge": "ack",
+                                    "acknowledgetime": "2026-03-11 21:03:57"
+                                },
+                                {
+                                    "id": 2,
+                                    "Tagname": "opcua.0.vars.Objects.OpenIndustry.Stansiya486Yeni.7105_Meter1_Temperature_float",
+                                    "Alarmtype": "alarm",
+                                    "alarmtimeconverted": "2026-03-11 13:32:39",
+                                    "alarmdateconverted": "2026-03-11",
+                                    "Description": "alarm",
+                                    "LimitValue": 100,
+                                    "Limitmessage": "alarm high",
+                                    "HIGH_LOW": "highHigh",
+                                    "AlarmTime": 1773221559867,
+                                    "AlarmValue": "101",
+                                    "Acknowledge": "ack",
+                                    "acknowledgetime": "1970-01-21 16:33:41"
+                                },
+                                {
+                                    "id": 1,
+                                    "Tagname": "opcua.0.vars.Objects.OpenIndustry.Stansiya486Yeni.7101_Meter1_Flow_Rate_Gross_float",
+                                    "Alarmtype": "alarm",
+                                    "alarmtimeconverted": "2026-03-11 13:29:29",
+                                    "alarmdateconverted": "2026-03-11",
+                                    "Description": "alarm test",
+                                    "LimitValue": 15,
+                                    "Limitmessage": "Alarm high",
+                                    "HIGH_LOW": "highHigh",
+                                    "AlarmTime": 1773221369976,
+                                    "AlarmValue": "24",
+                                    "Acknowledge": "ack",
+                                    "acknowledgetime": "2026-03-11 13:29:43"
+                                }
+                            ];
+                            console.log('✅ Returning mock historical data:', mockHistoricalData.length, 'records');
+                            if (callback) callback(mockHistoricalData);
+                        } else {
+                            if (callback) callback([]);
+                        }
+                    }
+                }
+            },
+            connection_socket: {
+                emit: function(event, adapter, command, params, callback) {
+                    console.log('📡 Socket emit (connection_socket):', event, adapter, command, params);
+                    if (callback) {
+                        callback({ success: true });
+                    }
+                }
+            }
+        };
+
+        console.log('🚀 Test page loaded. Use the controls to test both alarm viewers.');
+    </script>
+</body>
+</html>
